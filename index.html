@@ -1,0 +1,298 @@
+<html>
+<head>
+	<title>Tenks</title>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+    <canvas id="myCanvas" resize></canvas>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="js/paper-full.js"></script>
+    <script type="text/paperscript" canvas="myCanvas">
+
+
+var size = 10, numPlayers = 2, players = [], increment = 0, xStart = 0;
+
+size = Math.floor((Math.random() * 15) + 3);
+increment = Math.floor(window.innerHeight / (size));
+xStart = Math.floor((window.innerWidth - size * increment) / 2);
+
+var player1 = {
+    tank: new Raster(),
+    forward: false,
+    left: false,
+    right: false,
+    back: false
+}
+
+var boardMain = [];
+var verticalWalls = [];
+var horizontalWalls = [];
+
+
+function setup() {//           setup map here, also draw it
+    var x = xStart;
+    var y = 0;
+    for (var i = 0; i < size; i += 1) {
+        var row = [];
+        for (var ii = 0; ii < size; ii += 1) {
+
+
+            var rectangle = new Rectangle(new Point(x, y), new Size(increment, increment));
+            var cornerSize = new Size(10, 10);
+            var shape = new Shape.Rectangle(rectangle);
+
+            shape.fillColor = "#f45e9f";
+
+            var tileObject = {
+                path: shape,
+                top: false,
+                bot: false,
+                left: false,
+                right: false,
+                leftedge: false,
+                rightedge: false,
+                topedge: false,
+                bottedge: false
+            }
+
+            if (i === 0) {
+                tileObject.top = true;
+                tileObject.topedge = true;
+            } else if (i === size - 1) {
+                tileObject.bot = true;
+                tileObject.botedge = true;
+            }
+            if (ii === 0) {
+                tileObject.left = true;
+                tileObject.leftedge = true;
+            } else if (ii === size - 1) {
+                tileObject.right = true;
+                tileObject.rightedge = true;
+            }
+
+            row.push(tileObject);
+            x+=increment;
+        }
+        boardMain.push(row);
+        y+= increment;
+        x = xStart;
+    }
+
+    x = xStart + increment;
+    y = increment;
+    for (var i = 0; i < size; i += 1) {
+        var row = [];
+        for (var ii = 0; ii < size-1; ii += 1) {
+
+            if (Math.random() > 0.55) {
+                var from = new Point((ii + 1)* increment + xStart, i * increment);
+                var to = new Point((ii + 1) * increment + xStart, (i + 1) * increment);
+                var path = new Path.Line(from, to);
+                path.strokeColor = 'black';
+                path.strokeWidth = 10;
+
+                path.strokeCap = "square";
+
+                boardMain[i][ii].right = true;
+                boardMain[i][ii+1].left = true;
+                console.log(ii + ", " + i + " has a right")
+                console.log(ii+1 + ", " + i + " has a left")
+
+                row.push(path);
+            }else {
+                row.push(0);
+            }
+            
+            x+=increment;
+        }
+        verticalWalls.push(row);
+        y+= increment;
+        x = xStart;
+    }
+
+    x = xStart + increment;
+    y = increment;
+    for (var i = 0; i < size -1; i += 1) {
+        var row = [];
+        for (var ii = 0; ii < size; ii += 1) {
+
+            if (Math.random() > 0.55) {
+                var from = new Point(ii* increment + xStart, (i + 1) * increment);
+                var to = new Point((ii + 1) * increment + xStart, (i + 1) * increment);
+                var path = new Path.Line(from, to);
+                path.strokeColor = 'black';
+                path.strokeWidth = 10;
+
+                path.strokeCap = "square";
+
+                boardMain[i][ii].bot = true;
+                boardMain[i+1][ii].top = true;
+
+                row.push(path);
+            } else {
+                row.push(0);
+            }
+            
+            x+=increment;
+        }
+        horizontalWalls.push(row);
+        y+= increment;
+        x = xStart;
+    }
+
+    for (var i = 0; i < size; i += 1) { // check for 1s
+        for (var ii = 0; ii < size; ii += 1) {
+            if (boardMain[i][ii].top === true && boardMain[i][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true) {
+                boardMain[i][ii].path.remove();
+            } 
+        }
+    }
+    for (var i = 0; i < size-1; i += 1) { // check for 2s vertical
+        for (var ii = 0; ii < size; ii += 1) {
+            if (boardMain[i][ii].top === true && boardMain[i + 1][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true && boardMain[i+1][ii].left === true && boardMain[i+1][ii].right === true) {
+                boardMain[i][ii].path.remove();
+                boardMain[i+1][ii].path.remove();
+                console.log(ii + ", " + i + " is getting removed");
+            } 
+        }
+    }
+
+    for (var i = 0; i < size; i += 1) { // check for 2s horizontal
+        for (var ii = 0; ii < size-1; ii += 1) {
+            if (boardMain[i][ii].top === true && boardMain[i][ii+1].bot === true && boardMain[i][ii].bot === true && boardMain[i][ii+1].top === true && boardMain[i][ii].left === true && boardMain[i][ii+1].right === true) {
+                boardMain[i][ii].path.remove();
+                boardMain[i][ii+1].path.remove();
+                console.log(ii + ", " + i + " is gettingggggggg removed");
+            } 
+        }
+    }
+
+    // var tank = new Raster({ // a raster is just an image and this is where the tile images are made ;)
+    //     position: new Point(1000,100),
+    //     source: "images/tank.png"
+    // })
+
+    var rectangle = new Rectangle(new Point(100, 100), new Size(increment/3, increment/2));
+    var cornerSize = new Size(10, 10);
+    var tank = new Shape.Rectangle(rectangle, cornerSize);
+
+    tank.fillColor = "#00bfff";
+
+    player1.tank = tank;
+    // for (var i = 0; i < players.length; i += 1) {//  setup all of the images for the players including the nametag
+        
+    // }
+}
+
+function isNegative(number) { // check if number is negative
+    if (number > 0) {
+        return true;
+    } else if (number < 0) {
+        return false;
+    }
+}
+
+setup();
+
+function onFrame(event) { // runs 60 times per second TIP: Dont put a lot of loops in here because it will slow the game down a BUNCH
+
+    if (player1.forward) {
+        player1.tank.position.x -= Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 3;
+        player1.tank.position.y -= Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 3;
+    }
+    if (player1.left) {
+        player1.tank.rotation -= 3;
+    }
+    if (player1.right) {
+        player1.tank.rotation += 3;
+    }
+    if (player1.back) {
+        player1.tank.position.x += Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 2;
+        player1.tank.position.y += Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 2;
+    }
+}
+
+function onKeyDown(event) {
+
+    var move = true;
+
+    // for (var i = 0; i < horizontalWalls.length; i += 1) {
+    //     for (var ii = 0; ii < horizontalWalls[i].length; ii += 1) {
+    //         var hitOptions = {
+    //             fill: true, 
+    //             stroke: true, 
+    //             segments: true, 
+    //             tolerance: 200 
+    //         };  
+    //         var hit = player1.tank.hitTest(player1.tank.position, hitOptions);
+    //         if (hit.point === horizontalWalls[i][ii].position) {
+    //             move = false;
+    //         }
+    //     }
+    // }
+
+    // var hitOptions = {
+    //     fill: true, 
+    //     stroke: true, 
+    //     segments: true, 
+    //     selected: true,
+    //     tolerance: 2 
+    // };  
+    // var hit = player1.tank.hitTest(player1.tank.position, hitOptions);
+
+    // if (hit) {
+    //     move = false;
+    //     console.log("here");
+    // }
+
+
+    if (event.key === "up" && move === true) {
+        player1.forward = true;
+    }
+    if (event.key === "left" && move === true) {
+        player1.left = true;
+    }
+    if (event.key === "right" && move === true) {
+        player1.right = true;
+    }
+    if (event.key === "down" && move === true) {
+        player1.back = true;
+    }
+}
+
+function onKeyUp(event) {
+    if (event.key === "up") {
+        player1.forward = false;
+    }
+    if (event.key === "left") {
+        player1.left = false;
+    }
+    if (event.key === "right") {
+        player1.right = false;
+    }
+    if (event.key === "down") {
+        player1.back = false;
+    }
+}
+
+function onMouseMove(event) {
+
+}
+
+function onMouseDrag(event) {
+
+}
+
+function onMouseDown(event) {
+
+}
+
+function onMouseUp(event) {
+
+}
+
+
+
+
+    </script>
+</body>
+</html>

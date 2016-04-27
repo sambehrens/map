@@ -44,6 +44,8 @@ function setup() {//           setup map here, also draw it
 
             var tileObject = {
                 path: shape,
+                remove: false,
+                checked: false,
                 top: false,
                 bot: false,
                 left: false,
@@ -139,32 +141,47 @@ function setup() {//           setup map here, also draw it
         x = xStart;
     }
 
-    for (var i = 0; i < size; i += 1) { // check for 1s
-        for (var ii = 0; ii < size; ii += 1) {
-            if (boardMain[i][ii].top === true && boardMain[i][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true) {
-                boardMain[i][ii].path.remove();
-            } 
-        }
-    }
-    for (var i = 0; i < size-1; i += 1) { // check for 2s vertical
-        for (var ii = 0; ii < size; ii += 1) {
-            if (boardMain[i][ii].top === true && boardMain[i + 1][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true && boardMain[i+1][ii].left === true && boardMain[i+1][ii].right === true) {
-                boardMain[i][ii].path.remove();
-                boardMain[i+1][ii].path.remove();
-                console.log(ii + ", " + i + " is getting removed");
-            } 
-        }
-    }
+    // for (var i = 0; i < size; i += 1) {
+    //     for (var ii = 0; ii < size; ii += 1) {
 
-    for (var i = 0; i < size; i += 1) { // check for 2s horizontal
-        for (var ii = 0; ii < size-1; ii += 1) {
-            if (boardMain[i][ii].top === true && boardMain[i][ii+1].bot === true && boardMain[i][ii].bot === true && boardMain[i][ii+1].top === true && boardMain[i][ii].left === true && boardMain[i][ii+1].right === true) {
-                boardMain[i][ii].path.remove();
-                boardMain[i][ii+1].path.remove();
-                console.log(ii + ", " + i + " is gettingggggggg removed");
-            } 
-        }
-    }
+    //         if (boardMain[ii][i].remove === false) {
+    //             for (var t = 0; t < size; t += 1) {
+    //                 for (var tt = 0; tt < size; tt += 1) {
+    //                     if (boardMain[tt][t].left === true) {
+
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    // for (var i = 0; i < size; i += 1) { // check for 1s
+    //     for (var ii = 0; ii < size; ii += 1) {
+    //         if (boardMain[i][ii].top === true && boardMain[i][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true) {
+    //             boardMain[i][ii].path.remove();
+    //         } 
+    //     }
+    // }
+    // for (var i = 0; i < size-1; i += 1) { // check for 2s vertical
+    //     for (var ii = 0; ii < size; ii += 1) {
+    //         if (boardMain[i][ii].top === true && boardMain[i + 1][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true && boardMain[i+1][ii].left === true && boardMain[i+1][ii].right === true) {
+    //             boardMain[i][ii].path.remove();
+    //             boardMain[i+1][ii].path.remove();
+    //             console.log(ii + ", " + i + " is getting removed");
+    //         } 
+    //     }
+    // }
+
+    // for (var i = 0; i < size; i += 1) { // check for 2s horizontal
+    //     for (var ii = 0; ii < size-1; ii += 1) {
+    //         if (boardMain[i][ii].top === true && boardMain[i][ii+1].bot === true && boardMain[i][ii].bot === true && boardMain[i][ii+1].top === true && boardMain[i][ii].left === true && boardMain[i][ii+1].right === true) {
+    //             boardMain[i][ii].path.remove();
+    //             boardMain[i][ii+1].path.remove();
+    //             console.log(ii + ", " + i + " is gettingggggggg removed");
+    //         } 
+    //     }
+    // }
 
     // var tank = new Raster({ // a raster is just an image and this is where the tile images are made ;)
     //     position: new Point(1000,100),

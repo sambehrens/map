@@ -239,12 +239,13 @@ function isNegative(number) { // check if number is negative
 }
 
 setup();
+var speed = increment/30;
 
 function onFrame(event) { // runs 60 times per second TIP: Dont put a lot of loops in here because it will slow the game down a BUNCH
 
     if (player1.forward) {
-        player1.tank.position.x -= Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 3;
-        player1.tank.position.y -= Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 3;
+        player1.tank.position.x -= Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * speed;
+        player1.tank.position.y -= Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * speed;
     }
     if (player1.left) {
         player1.tank.rotation -= 3;
@@ -253,8 +254,8 @@ function onFrame(event) { // runs 60 times per second TIP: Dont put a lot of loo
         player1.tank.rotation += 3;
     }
     if (player1.back) {
-        player1.tank.position.x += Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 2;
-        player1.tank.position.y += Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * 2;
+        player1.tank.position.x += Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * (speed * (2/3));
+        player1.tank.position.y += Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * (speed * (2/3));
     }
 }
 

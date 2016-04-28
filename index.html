@@ -46,6 +46,8 @@ function setup() {//           setup map here, also draw it
                 path: shape,
                 remove: false,
                 checked: false,
+                comeback: true,
+                timeschecked: 0,
                 top: false,
                 bot: false,
                 left: false,
@@ -53,7 +55,7 @@ function setup() {//           setup map here, also draw it
                 leftedge: false,
                 rightedge: false,
                 topedge: false,
-                bottedge: false
+                botedge: false
             }
 
             if (i === 0) {
@@ -96,8 +98,6 @@ function setup() {//           setup map here, also draw it
 
                 boardMain[i][ii].right = true;
                 boardMain[i][ii+1].left = true;
-                console.log(ii + ", " + i + " has a right")
-                console.log(ii+1 + ", " + i + " has a left")
 
                 row.push(path);
             }else {
@@ -141,6 +141,101 @@ function setup() {//           setup map here, also draw it
         x = xStart;
     }
 
+    var comebacks = [];
+
+    var xx = 0, yy = 0;
+    while (true) {
+        console.log("start time through  " + xx + ", " + yy);
+
+        boardMain[yy][xx].checked = true;
+        boardMain[yy][xx].timeschecked += 1;
+        boardMain[yy][xx].path.fillColor = '#aaf00b';
+
+        var numberofspaces = 0;
+
+        if (boardMain[yy][xx].top === false) {
+            numberofspaces += 1;
+        }
+        if (boardMain[yy][xx].bot === false) {
+            numberofspaces += 1;
+        }
+        if (boardMain[yy][xx].left === false) {
+            numberofspaces += 1;
+        }
+        if (boardMain[yy][xx].right === false) {
+            numberofspaces += 1;
+        }
+
+        if (boardMain[yy][xx].timeschecked < numberofspaces) {
+            var coord = {
+                x: xx,
+                y: yy
+            };
+            comebacks.push(coord);
+        }
+
+        if (boardMain[yy][xx].topedge === false && boardMain[yy][xx].top === false && boardMain[yy-1][xx].checked === false) {
+            console.log("top edge is false");
+            yy -= 1;
+        }
+        else if (boardMain[yy][xx].botedge === false && boardMain[yy][xx].bot === false && boardMain[yy+1][xx].checked === false) {
+            console.log("bottom edge is false");
+            yy += 1;
+        }
+        else if (boardMain[yy][xx].leftedge === false && boardMain[yy][xx].left === false && boardMain[yy][xx-1].checked === false) {
+            console.log("left edge is false");
+            xx -= 1;
+        }
+        else if (boardMain[yy][xx].rightedge === false && boardMain[yy][xx].right === false && boardMain[yy][xx+1].checked === false) {
+            console.log("right edge is false");
+            xx += 1;
+        }
+        else {
+            if (comebacks.length === 0) {
+                break;
+            }
+            xx = comebacks[comebacks.length-1].x;
+            yy = comebacks[comebacks.length-1].y;
+            comebacks.splice(comebacks.length-1,1);
+        }
+
+        console.log("end of time through  " + xx + ", " + yy);
+    }
+
+
+    // var xx = 0, yy = 0;
+    // for (var i = 0; i < size * size; i += 1) {
+    //     console.log(i + " first time through");
+
+    //     boardMain[yy][xx].checked = true;
+    //     boardMain[yy][xx].path.fillColor = '#aaf00b';
+
+    //     if (boardMain[yy][xx].topedge === false) {
+    //         console.log("top edge is false");
+    //         if (boardMain[yy][xx].top === false && boardMain[yy-1][xx].checked === false) {
+    //             yy -= 1;
+    //         }
+    //     }
+    //     if (boardMain[yy][xx].botedge === false) {
+    //         console.log("bottom edge is false");
+    //         if (boardMain[yy][xx].bot === false && boardMain[yy+1][xx].checked === false) {
+    //             yy += 1;
+    //         }
+    //     }
+    //     if (boardMain[yy][xx].leftedge === false) {
+    //         console.log("left edge is false");
+    //         if (boardMain[yy][xx].left === false && boardMain[yy][xx-1].checked === false) {
+    //             xx -= 1;
+    //         }
+    //     }
+    //     if (boardMain[yy][xx].rightedge === false) {
+    //         console.log("right edge is false");
+    //         if (boardMain[yy][xx].right === false && boardMain[yy][xx+1].checked === false) {
+    //             xx += 1;
+    //         }
+    //     }
+    //     console.log(i + " end of time through");
+    // }
     // for (var i = 0; i < size; i += 1) {
     //     for (var ii = 0; ii < size; ii += 1) {
 

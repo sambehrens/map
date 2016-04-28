@@ -40,7 +40,7 @@ function setup() {//           setup map here, also draw it
             var cornerSize = new Size(10, 10);
             var shape = new Shape.Rectangle(rectangle);
 
-            shape.fillColor = "#f45e9f";
+            shape.fillColor = "#AAAAAA";
 
             var tileObject = {
                 path: shape,
@@ -141,147 +141,73 @@ function setup() {//           setup map here, also draw it
         x = xStart;
     }
 
-    var comebacks = [];
+    for (var i = 0; i < size; i += 1) {
+        for (var ii = 0; ii < size; ii += 1) {
+            var color = getRandomColor();
+            if (boardMain[i][ii].checked === false) {
+                var comebacks = [];
 
-    var xx = 0, yy = 0;
-    while (true) {
-        console.log("start time through  " + xx + ", " + yy);
+                var xx = ii, yy = i;
+                while (true) {
+                    console.log("start time through  " + xx + ", " + yy);
 
-        boardMain[yy][xx].checked = true;
-        boardMain[yy][xx].timeschecked += 1;
-        boardMain[yy][xx].path.fillColor = '#aaf00b';
+                    boardMain[yy][xx].checked = true;
+                    boardMain[yy][xx].timeschecked += 1;
+                    boardMain[yy][xx].path.fillColor = color;
 
-        var numberofspaces = 0;
+                    var numberofspaces = 0;
 
-        if (boardMain[yy][xx].top === false) {
-            numberofspaces += 1;
-        }
-        if (boardMain[yy][xx].bot === false) {
-            numberofspaces += 1;
-        }
-        if (boardMain[yy][xx].left === false) {
-            numberofspaces += 1;
-        }
-        if (boardMain[yy][xx].right === false) {
-            numberofspaces += 1;
-        }
+                    if (boardMain[yy][xx].top === false) {
+                        numberofspaces += 1;
+                    }
+                    if (boardMain[yy][xx].bot === false) {
+                        numberofspaces += 1;
+                    }
+                    if (boardMain[yy][xx].left === false) {
+                        numberofspaces += 1;
+                    }
+                    if (boardMain[yy][xx].right === false) {
+                        numberofspaces += 1;
+                    }
 
-        if (boardMain[yy][xx].timeschecked < numberofspaces) {
-            var coord = {
-                x: xx,
-                y: yy
-            };
-            comebacks.push(coord);
-        }
+                    if (boardMain[yy][xx].timeschecked < numberofspaces) {
+                        var coord = {
+                            x: xx,
+                            y: yy
+                        };
+                        comebacks.push(coord);
+                    }
 
-        if (boardMain[yy][xx].topedge === false && boardMain[yy][xx].top === false && boardMain[yy-1][xx].checked === false) {
-            console.log("top edge is false");
-            yy -= 1;
-        }
-        else if (boardMain[yy][xx].botedge === false && boardMain[yy][xx].bot === false && boardMain[yy+1][xx].checked === false) {
-            console.log("bottom edge is false");
-            yy += 1;
-        }
-        else if (boardMain[yy][xx].leftedge === false && boardMain[yy][xx].left === false && boardMain[yy][xx-1].checked === false) {
-            console.log("left edge is false");
-            xx -= 1;
-        }
-        else if (boardMain[yy][xx].rightedge === false && boardMain[yy][xx].right === false && boardMain[yy][xx+1].checked === false) {
-            console.log("right edge is false");
-            xx += 1;
-        }
-        else {
-            if (comebacks.length === 0) {
-                break;
+                    if (boardMain[yy][xx].topedge === false && boardMain[yy][xx].top === false && boardMain[yy-1][xx].checked === false) {
+                        console.log("top edge is false");
+                        yy -= 1;
+                    }
+                    else if (boardMain[yy][xx].botedge === false && boardMain[yy][xx].bot === false && boardMain[yy+1][xx].checked === false) {
+                        console.log("bottom edge is false");
+                        yy += 1;
+                    }
+                    else if (boardMain[yy][xx].leftedge === false && boardMain[yy][xx].left === false && boardMain[yy][xx-1].checked === false) {
+                        console.log("left edge is false");
+                        xx -= 1;
+                    }
+                    else if (boardMain[yy][xx].rightedge === false && boardMain[yy][xx].right === false && boardMain[yy][xx+1].checked === false) {
+                        console.log("right edge is false");
+                        xx += 1;
+                    }
+                    else {
+                        if (comebacks.length === 0) {
+                            break;
+                        }
+                        xx = comebacks[comebacks.length-1].x;
+                        yy = comebacks[comebacks.length-1].y;
+                        comebacks.splice(comebacks.length-1,1);
+                    }
+
+                    console.log("end of time through  " + xx + ", " + yy);
+                }
             }
-            xx = comebacks[comebacks.length-1].x;
-            yy = comebacks[comebacks.length-1].y;
-            comebacks.splice(comebacks.length-1,1);
         }
-
-        console.log("end of time through  " + xx + ", " + yy);
     }
-
-
-    // var xx = 0, yy = 0;
-    // for (var i = 0; i < size * size; i += 1) {
-    //     console.log(i + " first time through");
-
-    //     boardMain[yy][xx].checked = true;
-    //     boardMain[yy][xx].path.fillColor = '#aaf00b';
-
-    //     if (boardMain[yy][xx].topedge === false) {
-    //         console.log("top edge is false");
-    //         if (boardMain[yy][xx].top === false && boardMain[yy-1][xx].checked === false) {
-    //             yy -= 1;
-    //         }
-    //     }
-    //     if (boardMain[yy][xx].botedge === false) {
-    //         console.log("bottom edge is false");
-    //         if (boardMain[yy][xx].bot === false && boardMain[yy+1][xx].checked === false) {
-    //             yy += 1;
-    //         }
-    //     }
-    //     if (boardMain[yy][xx].leftedge === false) {
-    //         console.log("left edge is false");
-    //         if (boardMain[yy][xx].left === false && boardMain[yy][xx-1].checked === false) {
-    //             xx -= 1;
-    //         }
-    //     }
-    //     if (boardMain[yy][xx].rightedge === false) {
-    //         console.log("right edge is false");
-    //         if (boardMain[yy][xx].right === false && boardMain[yy][xx+1].checked === false) {
-    //             xx += 1;
-    //         }
-    //     }
-    //     console.log(i + " end of time through");
-    // }
-    // for (var i = 0; i < size; i += 1) {
-    //     for (var ii = 0; ii < size; ii += 1) {
-
-    //         if (boardMain[ii][i].remove === false) {
-    //             for (var t = 0; t < size; t += 1) {
-    //                 for (var tt = 0; tt < size; tt += 1) {
-    //                     if (boardMain[tt][t].left === true) {
-
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
-    // for (var i = 0; i < size; i += 1) { // check for 1s
-    //     for (var ii = 0; ii < size; ii += 1) {
-    //         if (boardMain[i][ii].top === true && boardMain[i][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true) {
-    //             boardMain[i][ii].path.remove();
-    //         } 
-    //     }
-    // }
-    // for (var i = 0; i < size-1; i += 1) { // check for 2s vertical
-    //     for (var ii = 0; ii < size; ii += 1) {
-    //         if (boardMain[i][ii].top === true && boardMain[i + 1][ii].bot === true && boardMain[i][ii].left === true && boardMain[i][ii].right === true && boardMain[i+1][ii].left === true && boardMain[i+1][ii].right === true) {
-    //             boardMain[i][ii].path.remove();
-    //             boardMain[i+1][ii].path.remove();
-    //             console.log(ii + ", " + i + " is getting removed");
-    //         } 
-    //     }
-    // }
-
-    // for (var i = 0; i < size; i += 1) { // check for 2s horizontal
-    //     for (var ii = 0; ii < size-1; ii += 1) {
-    //         if (boardMain[i][ii].top === true && boardMain[i][ii+1].bot === true && boardMain[i][ii].bot === true && boardMain[i][ii+1].top === true && boardMain[i][ii].left === true && boardMain[i][ii+1].right === true) {
-    //             boardMain[i][ii].path.remove();
-    //             boardMain[i][ii+1].path.remove();
-    //             console.log(ii + ", " + i + " is gettingggggggg removed");
-    //         } 
-    //     }
-    // }
-
-    // var tank = new Raster({ // a raster is just an image and this is where the tile images are made ;)
-    //     position: new Point(1000,100),
-    //     source: "images/tank.png"
-    // })
 
     var rectangle = new Rectangle(new Point(100, 100), new Size(increment/3, increment/2));
     var cornerSize = new Size(10, 10);
@@ -293,6 +219,15 @@ function setup() {//           setup map here, also draw it
     // for (var i = 0; i < players.length; i += 1) {//  setup all of the images for the players including the nametag
         
     // }
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 function isNegative(number) { // check if number is negative

@@ -45,9 +45,8 @@ function setup() {//           setup map here, also draw it
                 path: shape,
                 remove: false,
                 checked: false,
-                comeback: true,
                 timeschecked: 0,
-                biggest: false,
+                mag: 0,
                 top: false,
                 bot: false,
                 left: false,
@@ -141,12 +140,15 @@ function setup() {//           setup map here, also draw it
         x = xStart;
     }
 
+    var biggest = 0;
+
     for (var i = 0; i < size; i += 1) {
         for (var ii = 0; ii < size; ii += 1) {
             var color = getRandomColor();
             if (boardMain[i][ii].checked === false) {
-                var comebacks = [];
 
+                var visited = [];
+                var comebacks = [];
                 var xx = ii, yy = i;
                 while (true) {
                     console.log("start time through  " + xx + ", " + yy);
@@ -154,6 +156,12 @@ function setup() {//           setup map here, also draw it
                     boardMain[yy][xx].checked = true;
                     boardMain[yy][xx].timeschecked += 1;
                     boardMain[yy][xx].path.fillColor = color;
+
+                    var coords = {
+                        x: xx,
+                        y: yy
+                    };
+                    visited.push(coords);
 
                     var numberofspaces = 0;
 
@@ -196,6 +204,12 @@ function setup() {//           setup map here, also draw it
                     }
                     else {
                         if (comebacks.length === 0) {
+                            for (var m = 0; m < visited.length; m += 1) {
+                                boardMain[visited[m].y][visited[m].x].mag = visited.length;
+                            }
+                            if (visited.length > biggest) {
+                                biggest = visited.length;
+                            }
                             break;
                         }
                         xx = comebacks[comebacks.length-1].x;
@@ -205,6 +219,14 @@ function setup() {//           setup map here, also draw it
 
                     console.log("end of time through  " + xx + ", " + yy);
                 }
+            }
+        }
+    }
+
+    for (var i = 0; i < size; i += 1) {
+        for (var ii = 0; ii < size; ii += 1) {
+            if (boardMain[i][ii].mag !== biggest) {
+                boardMain[i][ii].path.remove();
             }
         }
     }

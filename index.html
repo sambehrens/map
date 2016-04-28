@@ -4,14 +4,13 @@
 	<link rel="stylesheet" href="css/style.css">
 </head>
     <canvas id="myCanvas" resize></canvas>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="js/paper-full.js"></script>
     <script type="text/paperscript" canvas="myCanvas">
 
 
 var size = 10, numPlayers = 2, players = [], increment = 0, xStart = 0;
 
-size = Math.floor((Math.random() * 15) + 3);
+size = Math.floor((Math.random() * 20) + 6);
 increment = Math.floor(window.innerHeight / (size));
 xStart = Math.floor((window.innerWidth - size * increment) / 2);
 

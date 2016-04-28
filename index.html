@@ -23,26 +23,14 @@ var player1 = {
 }
 
 var boardMain = [];
-var verticalWalls = [];
-var horizontalWalls = [];
-
 
 function setup() {//           setup map here, also draw it
-    var x = xStart;
-    var y = 0;
     for (var i = 0; i < size; i += 1) {
         var row = [];
         for (var ii = 0; ii < size; ii += 1) {
 
-
-            var rectangle = new Rectangle(new Point(x, y), new Size(increment, increment));
-            var cornerSize = new Size(10, 10);
-            var shape = new Shape.Rectangle(rectangle);
-
-            shape.fillColor = "#AAAAAA";
-
             var tileObject = {
-                path: shape,
+                path: new Rectangle(),
                 remove: false,
                 checked: false,
                 timeschecked: 0,
@@ -73,78 +61,37 @@ function setup() {//           setup map here, also draw it
             }
 
             row.push(tileObject);
-            x+=increment;
         }
         boardMain.push(row);
-        y+= increment;
-        x = xStart;
     }
 
-    x = xStart + increment;
-    y = increment;
     for (var i = 0; i < size; i += 1) {
-        var row = [];
         for (var ii = 0; ii < size-1; ii += 1) {
 
             if (Math.random() > 0.55) {
-                var from = new Point((ii + 1)* increment + xStart, i * increment);
-                var to = new Point((ii + 1) * increment + xStart, (i + 1) * increment);
-                var path = new Path.Line(from, to);
-                path.strokeColor = 'black';
-                path.strokeWidth = 10;
-
-                path.strokeCap = "square";
 
                 boardMain[i][ii].right = true;
                 boardMain[i][ii+1].left = true;
 
-                row.push(path);
-            }else {
-                row.push(0);
             }
-            
-            x+=increment;
         }
-        verticalWalls.push(row);
-        y+= increment;
-        x = xStart;
     }
 
-    x = xStart + increment;
-    y = increment;
     for (var i = 0; i < size -1; i += 1) {
-        var row = [];
         for (var ii = 0; ii < size; ii += 1) {
 
             if (Math.random() > 0.55) {
-                var from = new Point(ii* increment + xStart, (i + 1) * increment);
-                var to = new Point((ii + 1) * increment + xStart, (i + 1) * increment);
-                var path = new Path.Line(from, to);
-                path.strokeColor = 'black';
-                path.strokeWidth = 10;
-
-                path.strokeCap = "square";
 
                 boardMain[i][ii].bot = true;
                 boardMain[i+1][ii].top = true;
-
-                row.push(path);
-            } else {
-                row.push(0);
             }
-            
-            x+=increment;
         }
-        horizontalWalls.push(row);
-        y+= increment;
-        x = xStart;
     }
 
     var biggest = 0;
 
     for (var i = 0; i < size; i += 1) {
         for (var ii = 0; ii < size; ii += 1) {
-            var color = getRandomColor();
             if (boardMain[i][ii].checked === false) {
 
                 var visited = [];
@@ -155,7 +102,6 @@ function setup() {//           setup map here, also draw it
 
                     boardMain[yy][xx].checked = true;
                     boardMain[yy][xx].timeschecked += 1;
-                    boardMain[yy][xx].path.fillColor = color;
 
                     var coords = {
                         x: xx,
@@ -222,13 +168,80 @@ function setup() {//           setup map here, also draw it
             }
         }
     }
-
+    var x = xStart;
+    var y = 0;
+    var color = getRandomColor();
     for (var i = 0; i < size; i += 1) {
         for (var ii = 0; ii < size; ii += 1) {
-            if (boardMain[i][ii].mag !== biggest) {
-                boardMain[i][ii].path.remove();
+            if (boardMain[i][ii].mag === biggest) {
+            	var rectangle = new Rectangle(new Point(x, y), new Size(increment, increment));
+	            var cornerSize = new Size(10, 10);
+	            var shape = new Shape.Rectangle(rectangle);
+	            shape.fillColor = color;
+
+                boardMain[i][ii].path = shape;
+
+                
             }
+            x+=increment;
         }
+        y += increment;
+        x = xStart;
+    }
+
+    var x = xStart;
+    var y = 0;
+    var color = getRandomColor();
+    for (var i = 0; i < size; i += 1) {
+        for (var ii = 0; ii < size; ii += 1) {
+            if (boardMain[i][ii].mag === biggest) {
+                if (boardMain[i][ii].top === true) {
+
+                    var from = new Point(x, y);
+                    var to = new Point(x + increment, y);
+                    var path = new Path.Line(from, to);
+                    path.strokeColor = 'white';
+                    path.strokeWidth =increment/10;
+
+                    path.strokeCap = "round";
+
+                }
+                if (boardMain[i][ii].bot === true) {
+
+                    var from = new Point(x, y + increment);
+                    var to = new Point(x + increment, y + increment);
+                    var path = new Path.Line(from, to);
+                    path.strokeColor = 'white';
+                    path.strokeWidth =increment/10;
+
+                    path.strokeCap = "round";
+                }
+                if (boardMain[i][ii].left === true) {
+
+                    var from = new Point(x, y);
+                    var to = new Point(x, y + increment);
+                    var path = new Path.Line(from, to);
+                    path.strokeColor = 'white';
+                    path.strokeWidth = increment/10;
+
+                    path.strokeCap = "round";
+                    
+                }
+                if (boardMain[i][ii].right === true) {
+
+                    var from = new Point(x + increment, y);
+                    var to = new Point(x + increment, y + increment);
+                    var path = new Path.Line(from, to);
+                    path.strokeColor = 'white';
+                    path.strokeWidth = increment/10;
+
+                    path.strokeCap = "round";
+                }
+            }
+            x+=increment;
+        }
+        y += increment;
+        x = xStart;
     }
 
     var rectangle = new Rectangle(new Point(100, 100), new Size(increment/3, increment/2));

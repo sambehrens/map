@@ -10,7 +10,7 @@
 
 var size = 10, numPlayers = 2, players = [], increment = 0, xStart = 0;
 
-size = Math.floor((Math.random() * 20) + 6);
+size = Math.floor((Math.random() * 10) + 4);
 increment = Math.floor(window.innerHeight / (size));
 xStart = Math.floor((window.innerWidth - size * increment) / 2);
 
@@ -19,7 +19,8 @@ var player1 = {
     forward: false,
     left: false,
     right: false,
-    back: false
+    back: false,
+    coords: {x:0,y:0}
 }
 
 var boardMain = [];
@@ -91,7 +92,6 @@ function setup() {// adding tiles to array
                 var comebacks = [];
                 var xx = ii, yy = i;
                 while (true) {
-                    console.log("start time through  " + xx + ", " + yy);
 
                     boardMain[yy][xx].checked = true;
                     boardMain[yy][xx].timeschecked += 1;
@@ -144,6 +144,9 @@ function setup() {// adding tiles to array
                             }
                             if (visited.length > biggest) {
                                 biggest = visited.length;
+                                var playa = Math.floor((Math.random() * visited.length));
+                                player1.coords.x = visited[playa].x;
+                                player1.coords.y = visited[playa].y;
                             }
                             break;
                         }
@@ -151,8 +154,6 @@ function setup() {// adding tiles to array
                         yy = comebacks[comebacks.length-1].y;
                         comebacks.splice(comebacks.length-1,1);
                     }
-
-                    console.log("end of time through  " + xx + ", " + yy);
                 }
             }
         }
@@ -169,8 +170,6 @@ function setup() {// adding tiles to array
 	            shape.fillColor = color;
 
                 boardMain[i][ii].path = shape;
-
-                
             }
             x+=increment;
         }
@@ -232,7 +231,7 @@ function setup() {// adding tiles to array
         x = xStart;
     }
 
-    var rectangle = new Rectangle(new Point(100, 100), new Size(increment/3, increment/2));
+    var rectangle = new Rectangle(new Point(boardMain[player1.coords.y][player1.coords.x].path.position.x - (increment/3/2), boardMain[player1.coords.y][player1.coords.x].path.position.y - (increment/2/2)), new Size(increment/3, increment/2));
     var cornerSize = new Size(10, 10);
     var tank = new Shape.Rectangle(rectangle, cornerSize);
 
@@ -263,10 +262,38 @@ function isNegative(number) { // check if number is negative
 
 setup();
 var speed = increment/30;
+var move = true;
 
 function onFrame(event) { // runs 60 times per second TIP: Dont put a lot of loops in here because it will slow the game down a BUNCH
 
-    if (player1.forward) {
+    if (player1.forward || player1.back || player1.left || player1.right) {
+        if (boardMain[player1.coords.y][player1.coords.x].topedge === false && boardMain[player1.coords.y-1][player1.coords.x].path.contains(new Point(player1.tank.position.x, player1.tank.position.y))) {
+            player1.coords.y -= 1;
+        }
+        else if (boardMain[player1.coords.y][player1.coords.x].botedge === false && boardMain[player1.coords.y+1][player1.coords.x].path.contains(new Point(player1.tank.position.x, player1.tank.position.y))) {
+            player1.coords.y += 1;
+        }
+        if (boardMain[player1.coords.y][player1.coords.x].leftedge === false && boardMain[player1.coords.y][player1.coords.x-1].path.contains(new Point(player1.tank.position.x, player1.tank.position.y))) {
+            player1.coords.x -= 1;
+        }
+        else if (boardMain[player1.coords.y][player1.coords.x].rightedge === false && boardMain[player1.coords.y][player1.coords.x+1].path.contains(new Point(player1.tank.position.x, player1.tank.position.y))) {
+            player1.coords.x += 1;
+        }
+        if (boardMain[player1.coords.y][player1.coords.x].left === true && player1.tank.position.x-1 <= boardMain[player1.coords.y][player1.coords.x].path.position.x - increment/4) {
+            move = false;
+        }
+        else if (boardMain[player1.coords.y][player1.coords.x].right === true && player1.tank.position.x+player1.tank.size.height*1.5+1 >= boardMain[player1.coords.y][player1.coords.x].path.position.x + increment) {
+            move = false;
+        }
+        if (boardMain[player1.coords.y][player1.coords.x].top === true && player1.tank.position.y-1 <= boardMain[player1.coords.y][player1.coords.x].path.position.y - increment/4) {
+            move = false;
+        }
+        else if (boardMain[player1.coords.y][player1.coords.x].bot === true && player1.tank.position.y+player1.tank.size.height*1.5+1 >= boardMain[player1.coords.y][player1.coords.x].path.position.y + increment) {
+            move = false;
+        }
+    }
+
+    if (player1.forward && move === true) {
         player1.tank.position.x -= Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * speed;
         player1.tank.position.y -= Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * speed;
     }
@@ -276,7 +303,7 @@ function onFrame(event) { // runs 60 times per second TIP: Dont put a lot of loo
     if (player1.right) {
         player1.tank.rotation += 3;
     }
-    if (player1.back) {
+    if (player1.back && move === true) {
         player1.tank.position.x += Math.cos((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * (speed * (2/3));
         player1.tank.position.y += Math.sin((player1.tank.rotation) * (3.1415/180) + (3.1415/2)) * (speed * (2/3));
     }
@@ -284,48 +311,16 @@ function onFrame(event) { // runs 60 times per second TIP: Dont put a lot of loo
 
 function onKeyDown(event) {
 
-    var move = true;
-
-    // for (var i = 0; i < horizontalWalls.length; i += 1) {
-    //     for (var ii = 0; ii < horizontalWalls[i].length; ii += 1) {
-    //         var hitOptions = {
-    //             fill: true, 
-    //             stroke: true, 
-    //             segments: true, 
-    //             tolerance: 200 
-    //         };  
-    //         var hit = player1.tank.hitTest(player1.tank.position, hitOptions);
-    //         if (hit.point === horizontalWalls[i][ii].position) {
-    //             move = false;
-    //         }
-    //     }
-    // }
-
-    // var hitOptions = {
-    //     fill: true, 
-    //     stroke: true, 
-    //     segments: true, 
-    //     selected: true,
-    //     tolerance: 2 
-    // };  
-    // var hit = player1.tank.hitTest(player1.tank.position, hitOptions);
-
-    // if (hit) {
-    //     move = false;
-    //     console.log("here");
-    // }
-
-
-    if (event.key === "up" && move === true) {
+    if (event.key === "up") {
         player1.forward = true;
     }
-    if (event.key === "left" && move === true) {
+    if (event.key === "left") {
         player1.left = true;
     }
-    if (event.key === "right" && move === true) {
+    if (event.key === "right") {
         player1.right = true;
     }
-    if (event.key === "down" && move === true) {
+    if (event.key === "down") {
         player1.back = true;
     }
 }
